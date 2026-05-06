@@ -1,0 +1,30 @@
+{
+    "name": "match-3-game",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "build": "webpack --mode=production",
+        "start": "webpack serve --mode=development",
+        "e2e": "DEBUG=pw:api npx playwright test --config=./playwright.config.ts"
+    },
+    "author": "Sergey Chernenko",
+    "license": "ISC",
+    "dependencies": {
+        "gsap": "^3.9.1",
+        "pixi.js": "^8.9.1"
+    },
+    "devDependencies": {
+        "@playwright/test": "1.55.0",
+        "copy-webpack-plugin": "^11.0.0",
+        "css-loader": "^6.8.1",
+        "html-webpack-plugin": "^5.5.3",
+        "sass": "^1.69.5",
+        "sass-loader": "^13.3.2",
+        "style-loader": "^3.3.3",
+        "ts-loader": "^9.5.1",
+        "typescript": "^5.2.2",
+        "webpack": "^5.88.2",
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^4.15.1"
+    }
+}
