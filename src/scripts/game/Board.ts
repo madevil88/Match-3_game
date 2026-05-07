@@ -5,8 +5,8 @@ import { Tile } from "./Tile";
 
 const getRandomRange = (min: number, max: number): number =>
   Math.floor(
-    ((Math.abs(+window.crypto.getRandomValues(new Int8Array(1))) / 100) % 1) *
-      (max - min + 1),
+    (window.crypto.getRandomValues(new Uint8Array(1))[0] / 255) *
+      (max - min + 1)
   ) + min;
 
 export type FieldRect = {
