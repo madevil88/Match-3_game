@@ -41,14 +41,13 @@ export class ScoreManager {
 
   private _showResult(message: string): void {
     const background = new Graphics();
-    background.fill({ color: 0x000000, alpha: 0.75 });
     background.rect(
       this._boardParams.x,
       this._boardParams.y,
       this._boardParams.width,
       this._boardParams.height,
     );
-    background.fill();
+    background.fill({ color: 0x000000, alpha: 0.75 });
     this.container.addChild(background);
 
     const style = new TextStyle({
@@ -64,7 +63,6 @@ export class ScoreManager {
     resultText.anchor.set(0.5);
     resultText.x = this._boardParams.x + this._boardParams.width / 2;
     resultText.y = this._boardParams.y + this._boardParams.height / 2;
-    console.log(resultText.x, resultText.y);
 
     this.container.addChild(resultText);
 
