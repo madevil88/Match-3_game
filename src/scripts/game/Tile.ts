@@ -1,4 +1,4 @@
-import { Sprite, Texture } from 'pixi.js';
+import { Sprite } from 'pixi.js';
 import { gsap } from 'gsap';
 import { getSprite } from '../utils';
 import { Field } from './Field';
@@ -10,7 +10,7 @@ type Position = {
 
 export class Tile {
     public field: Field | undefined;
-    public sprite: Sprite = new Sprite(Texture.EMPTY);
+    public sprite!: Sprite;
     public color: string;
 
     public constructor(color: string) {
@@ -51,9 +51,8 @@ export class Tile {
             return;
         }
         this.sprite.destroy();
-        this.sprite = new Sprite(Texture.EMPTY);
         if (this.field) {
-            this.field.tile = undefined;
+            this.field.clearTile();
             this.field = undefined;
         }
     }
