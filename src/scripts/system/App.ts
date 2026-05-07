@@ -38,8 +38,7 @@ class GameApp {
   private async _loadSprites(
     assets: { alias: string; src: string }[],
   ): Promise<void> {
-    const srcArray = assets.map((asset) => asset.src);
-    await Assets.load(srcArray);
+    await Assets.load(assets);
   }
 
   public resetGame(): void {
