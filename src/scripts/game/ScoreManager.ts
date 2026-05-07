@@ -14,6 +14,7 @@ export class ScoreManager {
   private _gameTimer!: GameTimer;
   private readonly _gameTime: number;
   private readonly _onReset: () => void;
+  private _resultTimeline?: gsap.core.Timeline;
 
   public constructor(
     config: typeof Config,
@@ -66,9 +67,9 @@ export class ScoreManager {
 
     this.container.addChild(resultText);
 
-    const timeline = gsap.timeline({ repeat: -1, yoyo: true });
+    this._resultTimeline = gsap.timeline({ repeat: -1, yoyo: true });
 
-    timeline
+    this._resultTimeline
       .to(resultText, { duration: 1, pixi: { tint: 0xff3000 }, alpha: 1 })
       .to(resultText, { duration: 1, pixi: { tint: 0xffc700 }, alpha: 0.4 })
       .to(resultText, { duration: 1, pixi: { tint: 0xff3000 }, alpha: 1 })
@@ -156,5 +157,11 @@ export class ScoreManager {
       },
     );
     this.container.addChild(this._gameTimer.container);
+  }
+
+  public destroy(): void {
+    this._resultTimeline?.kill();
+    this._gameTimer.destroy();
+    this.container.destroy({ children: true });
   }
 }
