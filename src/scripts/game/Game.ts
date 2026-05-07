@@ -1,4 +1,5 @@
 import { Container, Sprite } from 'pixi.js';
+import { gsap } from 'gsap';
 import { getSprite } from '../utils';
 import { App } from '../system/App';
 import { Board } from './Board';
@@ -185,5 +186,18 @@ export class Game {
         if (this._selectedTile.field) {
             this._selectedTile.field.select();
         }
+    }
+
+    public destroy(): void {
+        this._board.container.removeAllListeners();
+        this._board.fields.forEach((field) => {
+            if (field.tile) {
+                gsap.killTweensOf(field.tile.sprite);
+                field.tile.sprite.destroy();
+            }
+            field.container.destroy({ children: true });
+        });
+        this._scoreManager.destroy();
+        this.container.destroy({ children: true });
     }
 }
