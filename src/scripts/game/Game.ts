@@ -10,7 +10,7 @@ import type { Tile } from './Tile';
 export class Game {
     public container: Container;
     private readonly _board: Board;
-    private _disabled: boolean = false;
+    private _isDisabled: boolean = false;
     private _selectedTile: Tile | undefined = undefined;
     private readonly _scoreManager: ScoreManager;
     private _isGameStarted: boolean = false;
@@ -55,7 +55,7 @@ export class Game {
     }
 
     private readonly _onTileClick = async (tile: Tile): Promise<void> => {
-        if (this._disabled) {
+        if (this._isDisabled) {
             return;
         }
         if (this._selectedTile) {
@@ -72,9 +72,12 @@ export class Game {
     };
 
     private async _swap(selectedTile: Tile, tile: Tile): Promise<void> {
-        this._disabled = true;
+        this._isDisabled = true;
 
-        if (!tile.field || !selectedTile.field) return;
+        if (!tile.field || !selectedTile.field) {
+            this._isDisabled = false;
+            return;
+        }
 
         const posA = { ...selectedTile.field.position };
         const posB = { ...tile.field.position };
@@ -163,7 +166,7 @@ export class Game {
                 const fallingTile = fallingField.tile;
                 fallingTile.field = emptyField;
                 emptyField.tile = fallingTile;
-                fallingField.tile = undefined;
+                fallingField.clearTile();
                 return fallingTile.fallDownTo(emptyField.position, 0.1);
             }
         }
