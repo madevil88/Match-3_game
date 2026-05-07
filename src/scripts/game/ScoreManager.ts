@@ -111,9 +111,8 @@ export class ScoreManager {
     button.eventMode = "static";
 
     const bg = new Graphics();
-    bg.fill({ color: 0x000000, alpha: 0.5 });
     bg.roundRect(0, 0, 150, 50, 10);
-    bg.fill();
+    bg.fill({ color: 0x000000, alpha: 0.5 });
     button.addChild(bg);
 
     const style = new TextStyle({
