@@ -47,13 +47,9 @@ export class Tile {
     }
 
     public remove(): void {
-        if (!this.sprite) {
-            return;
-        }
         this.sprite.destroy();
         if (this.field) {
             this.field.clearTile();
-            this.field = undefined;
         }
     }
 
