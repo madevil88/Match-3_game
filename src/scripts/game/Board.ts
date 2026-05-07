@@ -5,7 +5,7 @@ import { Tile } from "./Tile";
 
 const getRandomRange = (min: number, max: number): number =>
   Math.floor(
-    (window.crypto.getRandomValues(new Uint8Array(1))[0] / 255) *
+    (window.crypto.getRandomValues(new Uint8Array(1))[0] / 256) *
       (max - min + 1)
   ) + min;
 
