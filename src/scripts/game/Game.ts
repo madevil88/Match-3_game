@@ -97,7 +97,7 @@ export class Game {
             this._board.swap(tile, selectedTile);
         }
 
-        this._disabled = false;
+        this._isDisabled = false;
     }
 
     private _removeMatches(matches: Tile[][]): void {
@@ -123,8 +123,6 @@ export class Game {
 
         if (matches.length) {
             await this._processMatches(matches);
-        } else {
-            this._disabled = false;
         }
     }
 
