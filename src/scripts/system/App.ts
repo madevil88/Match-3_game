@@ -1,13 +1,12 @@
 import * as PIXI from "pixi.js";
-import { Assets, Application, Container } from "pixi.js";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { Config } from "./Config";
 import { Game } from "../game/Game";
 
 class GameApp {
-  private _app!: Application;
-  private _scene!: { container: Container };
+  private _app!: PIXI.Application;
+  private _scene!: Game;
   private readonly _config: typeof Config;
 
   public constructor(config: typeof Config) {
@@ -18,7 +17,7 @@ class GameApp {
     gsap.registerPlugin(PixiPlugin);
     PixiPlugin.registerPIXI(PIXI);
 
-    this._app = new Application();
+    this._app = new PIXI.Application();
     await this._app.init({
       resizeTo: globalThis as Window & typeof globalThis,
     });
@@ -38,10 +37,11 @@ class GameApp {
   private async _loadSprites(
     assets: { alias: string; src: string }[],
   ): Promise<void> {
-    await Assets.load(assets);
+    await PIXI.Assets.load(assets);
   }
 
   public resetGame(): void {
+    this._scene.destroy();
     this._app.stage.removeChildren();
     this._scene = new Game(this._config);
     this._app.stage.eventMode = "static";
