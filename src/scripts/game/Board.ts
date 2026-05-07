@@ -20,8 +20,8 @@ export class Board {
   public container: Container;
   private readonly _field: Field;
   public fields: Field[];
-  public rows: number;
-  public cols: number;
+  public readonly rows: number;
+  public readonly cols: number;
   private _halfFieldWidth: number = 0;
   private _width: number = 0;
   private _height: number = 0;
@@ -146,10 +146,12 @@ export class Board {
             });
 
             const isValid = matchedTiles.every(
-              (tile) => tile && tile.color === checkingTile.color,
+              (tile) => tile !== undefined && tile.color === checkingTile.color,
             );
 
-            return isValid ? [checkingTile, ...matchedTiles] : null;
+            if (!isValid) return null;
+            const tiles = matchedTiles.filter((t): t is Tile => t !== undefined);
+            return [checkingTile, ...tiles];
           })
           .filter((match): match is Tile[] => match !== null);
       });
