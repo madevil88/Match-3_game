@@ -7,6 +7,7 @@ export class GameTimer {
     private _timerText!: Text;
     private _intervalId?: number;
     private readonly _onComplete?: () => void;
+    private _tweenAnimation?: gsap.core.Tween;
 
     public constructor(x: number, y: number, gameTime: number, onComplete?: () => void) {
         this.container = new Container();
@@ -28,7 +29,7 @@ export class GameTimer {
         this._timerText.y = y - this._timerText.height / 2;
         this.container.addChild(this._timerText);
 
-        gsap.to(this._timerText.scale, {
+        this._tweenAnimation = gsap.to(this._timerText.scale, {
             x: 1.05,
             y: 1.05,
             duration: 0.5,
@@ -55,5 +56,10 @@ export class GameTimer {
             clearInterval(this._intervalId);
             this._intervalId = undefined;
         }
+    }
+
+    public destroy(): void {
+        this.stopTimer();
+        this._tweenAnimation?.kill();
     }
 }

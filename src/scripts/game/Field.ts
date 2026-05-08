@@ -61,4 +61,11 @@ export class Field {
         tile.field = this;
         tile.setPosition(this.position);
     }
+
+    public clearTile(): void {
+        if (this.tile) {
+            this.tile.field = undefined;
+        }
+        this.tile = undefined;
+    }
 }

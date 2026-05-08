@@ -1,4 +1,5 @@
 import { Container, Sprite } from 'pixi.js';
+import { gsap } from 'gsap';
 import { getSprite } from '../utils';
 import { App } from '../system/App';
 import { Board } from './Board';
@@ -10,7 +11,7 @@ import type { Tile } from './Tile';
 export class Game {
     public container: Container;
     private readonly _board: Board;
-    private _disabled: boolean = false;
+    private _isDisabled: boolean = false;
     private _selectedTile: Tile | undefined = undefined;
     private readonly _scoreManager: ScoreManager;
     private _isGameStarted: boolean = false;
@@ -55,7 +56,7 @@ export class Game {
     }
 
     private readonly _onTileClick = async (tile: Tile): Promise<void> => {
-        if (this._disabled) {
+        if (this._isDisabled) {
             return;
         }
         if (this._selectedTile) {
@@ -72,9 +73,12 @@ export class Game {
     };
 
     private async _swap(selectedTile: Tile, tile: Tile): Promise<void> {
-        this._disabled = true;
+        this._isDisabled = true;
 
-        if (!tile.field || !selectedTile.field) return;
+        if (!tile.field || !selectedTile.field) {
+            this._isDisabled = false;
+            return;
+        }
 
         const posA = { ...selectedTile.field.position };
         const posB = { ...tile.field.position };
@@ -94,7 +98,7 @@ export class Game {
             this._board.swap(tile, selectedTile);
         }
 
-        this._disabled = false;
+        this._isDisabled = false;
     }
 
     private _removeMatches(matches: Tile[][]): void {
@@ -120,8 +124,6 @@ export class Game {
 
         if (matches.length) {
             await this._processMatches(matches);
-        } else {
-            this._disabled = false;
         }
     }
 
@@ -163,7 +165,7 @@ export class Game {
                 const fallingTile = fallingField.tile;
                 fallingTile.field = emptyField;
                 emptyField.tile = fallingTile;
-                fallingField.tile = undefined;
+                fallingField.clearTile();
                 return fallingTile.fallDownTo(emptyField.position, 0.1);
             }
         }
@@ -184,5 +186,16 @@ export class Game {
         if (this._selectedTile.field) {
             this._selectedTile.field.select();
         }
+    }
+
+    public destroy(): void {
+        this._board.container.removeAllListeners();
+        this._board.fields.forEach((field) => {
+            if (field.tile) {
+                gsap.killTweensOf(field.tile.sprite);
+            }
+        });
+        this._scoreManager.destroy();
+        this.container.destroy({ children: true });
     }
 }

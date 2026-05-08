@@ -14,6 +14,7 @@ export class ScoreManager {
   private _gameTimer!: GameTimer;
   private readonly _gameTime: number;
   private readonly _onReset: () => void;
+  private _resultTimeline?: gsap.core.Timeline;
 
   public constructor(
     config: typeof Config,
@@ -41,14 +42,13 @@ export class ScoreManager {
 
   private _showResult(message: string): void {
     const background = new Graphics();
-    background.fill({ color: 0x000000, alpha: 0.75 });
     background.rect(
       this._boardParams.x,
       this._boardParams.y,
       this._boardParams.width,
       this._boardParams.height,
     );
-    background.fill();
+    background.fill({ color: 0x000000, alpha: 0.75 });
     this.container.addChild(background);
 
     const style = new TextStyle({
@@ -64,13 +64,12 @@ export class ScoreManager {
     resultText.anchor.set(0.5);
     resultText.x = this._boardParams.x + this._boardParams.width / 2;
     resultText.y = this._boardParams.y + this._boardParams.height / 2;
-    console.log(resultText.x, resultText.y);
 
     this.container.addChild(resultText);
 
-    const timeline = gsap.timeline({ repeat: -1, yoyo: true });
+    this._resultTimeline = gsap.timeline({ repeat: -1, yoyo: true });
 
-    timeline
+    this._resultTimeline
       .to(resultText, { duration: 1, pixi: { tint: 0xff3000 }, alpha: 1 })
       .to(resultText, { duration: 1, pixi: { tint: 0xffc700 }, alpha: 0.4 })
       .to(resultText, { duration: 1, pixi: { tint: 0xff3000 }, alpha: 1 })
@@ -113,9 +112,8 @@ export class ScoreManager {
     button.eventMode = "static";
 
     const bg = new Graphics();
-    bg.fill({ color: 0x000000, alpha: 0.5 });
     bg.roundRect(0, 0, 150, 50, 10);
-    bg.fill();
+    bg.fill({ color: 0x000000, alpha: 0.5 });
     button.addChild(bg);
 
     const style = new TextStyle({
@@ -159,5 +157,11 @@ export class ScoreManager {
       },
     );
     this.container.addChild(this._gameTimer.container);
+  }
+
+  public destroy(): void {
+    this._resultTimeline?.kill();
+    this._gameTimer.destroy();
+    this.container.destroy({ children: true });
   }
 }
