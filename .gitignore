@@ -6,3 +6,17 @@ rush-logs/
 .heft/
 *.log
 .DS_Store
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Editor
+.vscode/
+.idea/
+*.swp

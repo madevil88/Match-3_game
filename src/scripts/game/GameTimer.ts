@@ -5,7 +5,7 @@ export class GameTimer {
     public container: Container;
     private _timeLeft: number;
     private _timerText!: Text;
-    private _intervalId?: number;
+    private _intervalId?: ReturnType<typeof globalThis.setInterval>;
     private readonly _onComplete?: () => void;
     private _tweenAnimation?: gsap.core.Tween;
 
@@ -40,7 +40,7 @@ export class GameTimer {
     }
 
     private _startTimer(): void {
-        this._intervalId = window.setInterval(() => {
+        this._intervalId = globalThis.setInterval(() => {
             this._timeLeft--;
             this._timerText.text = `Time: ${this._timeLeft}`;
 
@@ -56,6 +56,11 @@ export class GameTimer {
             clearInterval(this._intervalId);
             this._intervalId = undefined;
         }
+    }
+
+    public reposition(x: number, y: number): void {
+        this._timerText.x = x;
+        this._timerText.y = y - this._timerText.height / 2;
     }
 
     public destroy(): void {

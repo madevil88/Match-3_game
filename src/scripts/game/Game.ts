@@ -15,6 +15,7 @@ export class Game {
     private _selectedTile: Tile | undefined = undefined;
     private readonly _scoreManager: ScoreManager;
     private _isGameStarted: boolean = false;
+    private _bg!: Sprite;
 
     public constructor(config: typeof Config) {
         this.container = new Container();
@@ -49,10 +50,17 @@ export class Game {
     }
 
     private _createBackground(): Sprite {
-        const bg = getSprite('bg');
-        bg.width = globalThis.innerWidth;
-        bg.height = globalThis.innerHeight;
-        return bg;
+        this._bg = getSprite('bg');
+        this._bg.width = globalThis.innerWidth;
+        this._bg.height = globalThis.innerHeight;
+        return this._bg;
+    }
+
+    public resize(): void {
+        this._bg.width = globalThis.innerWidth;
+        this._bg.height = globalThis.innerHeight;
+        this._board.adjustPosition();
+        this._scoreManager.resize(this._board.getFieldRect());
     }
 
     private readonly _onTileClick = async (tile: Tile): Promise<void> => {
@@ -60,12 +68,12 @@ export class Game {
             return;
         }
         if (this._selectedTile) {
-            if (!this._selectedTile.isNeighbour(tile)) {
-                this._clearSelection(tile);
-                this._selectTile(tile);
-            } else {
+            if (this._selectedTile.isNeighbour(tile)) {
                 await this._swap(this._selectedTile, tile);
                 this._clearSelection(tile);
+            } else {
+                this._clearSelection(tile);
+                this._selectTile(tile);
             }
         } else {
             this._selectTile(tile);
@@ -163,9 +171,9 @@ export class Game {
 
             if (fallingField?.tile) {
                 const fallingTile = fallingField.tile;
+                fallingField.tile = undefined;
                 fallingTile.field = emptyField;
                 emptyField.tile = fallingTile;
-                fallingField.clearTile();
                 return fallingTile.fallDownTo(emptyField.position, 0.1);
             }
         }

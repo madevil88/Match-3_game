@@ -30,10 +30,8 @@ export class Tile {
                 duration,
                 delay,
                 ease,
-                pixi: {
-                    x: position.x,
-                    y: position.y
-                },
+                x: position.x,
+                y: position.y,
                 onComplete: resolve
             });
         });
@@ -47,6 +45,7 @@ export class Tile {
     }
 
     public remove(): void {
+        gsap.killTweensOf(this.sprite);
         this.sprite.destroy();
         if (this.field) {
             this.field.clearTile();
