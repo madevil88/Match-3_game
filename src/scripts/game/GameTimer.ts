@@ -61,6 +61,5 @@ export class GameTimer {
     public destroy(): void {
         this.stopTimer();
         this._tweenAnimation?.kill();
-        this.container.destroy({ children: true });
     }
 }

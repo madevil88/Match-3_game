@@ -193,9 +193,7 @@ export class Game {
         this._board.fields.forEach((field) => {
             if (field.tile) {
                 gsap.killTweensOf(field.tile.sprite);
-                field.tile.sprite.destroy();
             }
-            field.container.destroy({ children: true });
         });
         this._scoreManager.destroy();
         this.container.destroy({ children: true });
