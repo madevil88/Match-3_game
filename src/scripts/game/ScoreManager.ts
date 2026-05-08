@@ -8,13 +8,18 @@ export class ScoreManager {
   public container: Container;
   private _score: number;
   private _scoreText!: Text;
-  private readonly _boardParams: FieldRect;
+  private _boardParams: FieldRect;
   private readonly _backgroundHeight: number = 50;
   private _isResultShown: boolean = false;
   private _gameTimer!: GameTimer;
   private readonly _gameTime: number;
   private readonly _onReset: () => void;
   private _resultTimeline?: gsap.core.Timeline;
+  private _bgGraphics?: Graphics;
+  private _resetButton?: Container;
+  private _resultOverlay?: Graphics;
+  private _resultTextNode?: Text;
+  private _lastResult?: string;
 
   public constructor(
     config: typeof Config,
@@ -41,6 +46,8 @@ export class ScoreManager {
   }
 
   private _showResult(message: string): void {
+    this._lastResult = message;
+
     const background = new Graphics();
     background.rect(
       this._boardParams.x,
@@ -49,6 +56,7 @@ export class ScoreManager {
       this._boardParams.height,
     );
     background.fill({ color: 0x000000, alpha: 0.75 });
+    this._resultOverlay = background;
     this.container.addChild(background);
 
     const style = new TextStyle({
@@ -64,7 +72,7 @@ export class ScoreManager {
     resultText.anchor.set(0.5);
     resultText.x = this._boardParams.x + this._boardParams.width / 2;
     resultText.y = this._boardParams.y + this._boardParams.height / 2;
-
+    this._resultTextNode = resultText;
     this.container.addChild(resultText);
 
     this._resultTimeline = gsap.timeline({ repeat: -1, yoyo: true });
@@ -85,6 +93,7 @@ export class ScoreManager {
       this._backgroundHeight,
     );
     background.fill({ color: 0xececec });
+    this._bgGraphics = background;
     this.container.addChild(background);
   }
 
@@ -136,6 +145,7 @@ export class ScoreManager {
       this._boardParams.width / 2 - button.width / 2 + this._boardParams.x;
     button.y = this._boardParams.y + this._boardParams.height + 5;
 
+    this._resetButton = button;
     this.container.addChild(button);
   }
 
@@ -157,6 +167,39 @@ export class ScoreManager {
       },
     );
     this.container.addChild(this._gameTimer.container);
+  }
+
+  public resize(fieldRect: FieldRect): void {
+    this._boardParams = fieldRect;
+
+    const timerContainer = this._gameTimer.container;
+    timerContainer.removeFromParent();
+
+    this._bgGraphics?.destroy();
+    this._bgGraphics = undefined;
+    this._scoreText.destroy();
+    this._resetButton?.destroy();
+    this._resetButton = undefined;
+
+    this._resultTimeline?.kill();
+    this._resultTimeline = undefined;
+    this._resultOverlay?.destroy();
+    this._resultOverlay = undefined;
+    this._resultTextNode?.destroy();
+    this._resultTextNode = undefined;
+
+    this._createBackground();
+    this._createScore();
+    this._createResetButton();
+
+    const timerPosX = fieldRect.x + (this._backgroundHeight - this._scoreText.height) / 2;
+    const timerPosY = fieldRect.y - this._backgroundHeight / 2;
+    this._gameTimer.reposition(timerPosX, timerPosY);
+    this.container.addChild(timerContainer);
+
+    if (this._isResultShown && this._lastResult) {
+      this._showResult(this._lastResult);
+    }
   }
 
   public destroy(): void {

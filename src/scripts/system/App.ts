@@ -8,6 +8,7 @@ class GameApp {
   private _app!: PIXI.Application;
   private _scene!: Game;
   private readonly _config: typeof Config;
+  private _resizeTimeout?: ReturnType<typeof globalThis.setTimeout>;
 
   public constructor(config: typeof Config) {
     this._config = config;
@@ -32,7 +33,14 @@ class GameApp {
     this._scene = new Game(this._config);
     this._app.stage.eventMode = "static";
     this._app.stage.addChild(this._scene.container);
+
+    globalThis.addEventListener('resize', this._onResize);
   }
+
+  private readonly _onResize = (): void => {
+    clearTimeout(this._resizeTimeout);
+    this._resizeTimeout = globalThis.setTimeout(() => this._scene.resize(), 200);
+  };
 
   private async _loadSprites(
     assets: { alias: string; src: string }[],

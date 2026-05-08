@@ -5,7 +5,7 @@ import { Tile } from "./Tile";
 
 const getRandomRange = (min: number, max: number): number =>
   Math.floor(
-    (window.crypto.getRandomValues(new Uint8Array(1))[0] / 256) *
+    (globalThis.crypto.getRandomValues(new Uint8Array(1))[0] / 256) *
       (max - min + 1)
   ) + min;
 
@@ -45,7 +45,7 @@ export class Board {
     this.fields
       .map((field) => this.createTile(field))
       .forEach(({ sprite }) => this.container.addChild(sprite));
-    this._adjustPosition();
+    this.adjustPosition();
   }
 
   public createTile(field: Field): Tile {
@@ -81,7 +81,7 @@ export class Board {
     }
   }
 
-  private _adjustPosition(): void {
+  public adjustPosition(): void {
     const fieldWidth = this.fields[0].sprite.width;
     this._halfFieldWidth = fieldWidth / 2;
     this._width = this.cols * fieldWidth;
@@ -146,7 +146,7 @@ export class Board {
             });
 
             const isValid = matchedTiles.every(
-              (tile) => tile !== undefined && tile.color === checkingTile.color,
+              (tile) => tile?.color === checkingTile.color,
             );
 
             if (!isValid) return null;
